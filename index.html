@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Помощник руководителя</title>
+<meta name="theme-color" content="#1f3a5f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>
+:root{
+  --bg:#f3f4f7; --card:#fff; --ink:#1b2230; --muted:#667085; --line:#e3e6ec;
+  --brand:#1f3a5f; --brand-ink:#fff; --accent:#c8902e; --ok:#2f7d4f; --warn:#b5462f; --chip:#eef1f6;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#11151c; --card:#1a202a; --ink:#e7eaf0; --muted:#98a2b3; --line:#2a3240;
+    --brand:#3b6ea8; --accent:#e0a84a; --ok:#5cb37f; --warn:#e07a62; --chip:#232b37; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  padding-bottom:env(safe-area-inset-bottom)}
+header{background:var(--brand);color:var(--brand-ink);padding:calc(14px + env(safe-area-inset-top)) 16px 14px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:19px;font-weight:650;letter-spacing:.2px}
+header p{margin:2px 0 0;font-size:13px;opacity:.8}
+main{max-width:760px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h2{margin:0 0 12px;font-size:17px;display:flex;align-items:center;gap:8px}
+.card h2 .ico{font-size:20px}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media (max-width:420px){.row3{grid-template-columns:1fr 1fr}.row3 .wide{grid-column:1/-1}}
+.field{position:relative}
+.sugg{position:absolute;left:0;right:0;top:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-top:4px;z-index:4;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.sugg div{padding:9px 12px;cursor:pointer;font-size:14px}
+.sugg div:hover,.sugg div.on{background:var(--chip)}
+.sugg small{color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-weight:600;border:0;border-radius:10px;padding:11px 16px;cursor:pointer;text-decoration:none;
+  background:var(--brand);color:var(--brand-ink)}
+.btn.sec{background:var(--chip);color:var(--ink)}
+.btn.sm{padding:7px 11px;font-size:14px;font-weight:550}
+.btn.full{width:100%}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.muted{color:var(--muted);font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{background:var(--chip);border-radius:999px;padding:5px 11px;font-size:14px;cursor:pointer;border:1px solid transparent}
+.chip.on{border-color:var(--brand)}
+.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.day{background:var(--chip);border-radius:12px;padding:10px;text-align:center}
+.day .d{font-size:13px;color:var(--muted)}
+.day .w{font-size:28px;line-height:1.2}
+.day .t{font-weight:650}
+.day .p{font-size:12px;color:var(--muted)}
+ul.clean{list-style:none;margin:0;padding:0}
+ul.clean li{padding:7px 0;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+ul.clean li:last-child{border-bottom:0}
+.check li{cursor:pointer}
+.check li.done span{text-decoration:line-through;color:var(--muted)}
+.box{width:20px;height:20px;border:2px solid var(--muted);border-radius:6px;flex:none;margin-top:1px;display:grid;place-items:center;font-size:13px}
+.done .box{background:var(--ok);border-color:var(--ok);color:#fff}
+.plan-day{margin-bottom:14px}
+.plan-day h3{margin:0 0 6px;font-size:15px}
+.tl{border-left:3px solid var(--line);margin-left:6px;padding-left:12px}
+.tl div{padding:4px 0;position:relative}
+.tl div::before{content:"";position:absolute;left:-18.5px;top:11px;width:9px;height:9px;border-radius:50%;background:var(--brand)}
+.tl b{display:inline-block;min-width:48px}
+.warn{background:color-mix(in srgb,var(--warn) 14%,transparent);color:var(--warn);border-radius:10px;padding:9px 12px;font-size:14px;margin-bottom:10px}
+.ev{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.ev:last-child{border-bottom:0}
+.ev .x{margin-left:auto;background:none;border:0;color:var(--muted);font-size:20px;cursor:pointer}
+.links a{margin:0 6px 6px 0}
+.trip-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.trip-item:last-child{border-bottom:0}
+.trip-item .del{margin-left:auto;background:none;border:0;color:var(--muted);font-size:20px;cursor:pointer}
+.hidden{display:none}
+.loading{color:var(--muted);font-size:14px}
+.back{background:none;border:0;color:inherit;font:inherit;opacity:.85;cursor:pointer;padding:0;margin-bottom:4px;font-size:14px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Помощник руководителя</h1>
+  <p id="sub">Поездки: билеты, погода, дела, гостиницы</p>
+</header>
+<main>
+
+<!-- Экран: новая поездка и список -->
+<section id="home">
+  <div class="card">
+    <h2><span class="ico">✈️</span>Новая поездка</h2>
+    <div class="row">
+      <div class="field"><label>Откуда</label><input id="from" placeholder="Город" autocomplete="off"></div>
+      <div class="field"><label>Куда</label><input id="to" placeholder="Город" autocomplete="off"></div>
+    </div>
+    <div class="chips" id="quickFrom"></div>
+    <div class="row">
+      <div><label>Туда</label><input type="date" id="dOut"></div>
+      <div><label>Обратно</label><input type="date" id="dBack"></div>
+    </div>
+    <button class="btn full" id="make">Собрать поездку</button>
+    <p class="muted" id="formMsg"></p>
+  </div>
+  <div class="card" id="tripsCard">
+    <h2><span class="ico">🗂</span>Мои поездки</h2>
+    <div id="trips"></div>
+  </div>
+</section>
+
+<!-- Экран: карточка поездки -->
+<section id="trip" class="hidden"></section>
+
+</main>
+<script>
+// ---------- хранение ----------
+const KEY='pomoshnik-trips-v1';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}
+// погоду (_w) не сохраняем — она обновляется при каждом открытии
+function save(){try{localStorage.setItem(KEY,JSON.stringify(trips,(k,v)=>k==='_w'?undefined:v))}catch(e){}}
+let trips=load();
+let cur=null;
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)};
+const WD=['вс','пн','вт','ср','чт','пт','сб'];
+const MON=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const nice=s=>{const d=parse(s);return d.getDate()+' '+MON[d.getMonth()]+', '+WD[d.getDay()]};
+const short=s=>{const d=parse(s);return d.getDate()+'.'+pad(d.getMonth()+1)};
+function daysOf(t){const r=[];let s=t.dOut;const end=t.dBack||t.dOut;while(s<=end&&r.length<31){r.push(s);s=addDays(s,1)}return r}
+
+// ---------- поиск города (Travelpayouts: код аэропорта + координаты) ----------
+const cityCache={};
+async function findCity(q){
+  q=q.trim(); if(!q) return [];
+  if(cityCache[q]) return cityCache[q];
+  const r=await fetch('https://autocomplete.travelpayouts.com/places2?locale=ru&types[]=city&term='+encodeURIComponent(q));
+  const j=await r.json();
+  const list=j.slice(0,6).map(c=>({name:c.name,code:c.code,country:c.country_name,lat:c.coordinates.lat,lon:c.coordinates.lon}));
+  cityCache[q]=list; return list;
+}
+const picked={from:null,to:null};
+function setupCity(id){
+  const inp=$('#'+id); let box=null, timer=null, items=[], sel=-1;
+  const close=()=>{box&&box.remove();box=null;sel=-1};
+  const choose=c=>{picked[id]=c;inp.value=c.name;close()};
+  inp.addEventListener('input',()=>{
+    picked[id]=null; clearTimeout(timer);
+    timer=setTimeout(async()=>{
+      try{items=await findCity(inp.value)}catch(e){items=[]}
+      close(); if(!items.length) return;
+      box=document.createElement('div'); box.className='sugg';
+      items.forEach(c=>{const d=document.createElement('div');d.innerHTML=esc(c.name)+' <small>'+esc(c.country)+' · '+c.code+'</small>';
+        d.onmousedown=e=>{e.preventDefault();choose(c)};box.appendChild(d)});
+      inp.parentNode.appendChild(box);
+    },250);
+  });
+  inp.addEventListener('keydown',e=>{
+    if(!box) return; const n=box.children.length;
+    if(e.key==='ArrowDown'){sel=(sel+1)%n}else if(e.key==='ArrowUp'){sel=(sel-1+n)%n}
+    else if(e.key==='Enter'){e.preventDefault();choose(items[Math.max(sel,0)]);return}else return;
+    [...box.children].forEach((d,i)=>d.classList.toggle('on',i===sel));
+  });
+  inp.addEventListener('blur',()=>setTimeout(close,150));
+}
+setupCity('from'); setupCity('to');
+
+// Быстрый выбор «откуда»
+const HOMES=[{name:'Минск',code:'MSQ',country:'Беларусь',lat:53.9,lon:27.567},{name:'Москва',code:'MOW',country:'Россия',lat:55.756,lon:37.617}];
+HOMES.forEach(c=>{const s=document.createElement('span');s.className='chip';s.textContent='из '+c.name;
+  s.onclick=()=>{picked.from=c;$('#from').value=c.name};$('#quickFrom').appendChild(s)});
+picked.from=HOMES[0]; $('#from').value='Минск';
+$('#dOut').value=addDays(iso(new Date()),7); $('#dBack').value=addDays(iso(new Date()),9);
+
+$('#make').onclick=async()=>{
+  const msg=$('#formMsg'); msg.textContent='';
+  try{
+    for(const id of ['from','to']){
+      if(!picked[id]){const l=await findCity($('#'+id).value); if(!l.length){msg.textContent='Не нашёл город «'+$('#'+id).value+'»';return} picked[id]=l[0]}
+    }
+  }catch(e){msg.textContent='Нет интернета — не могу найти город';return}
+  const dOut=$('#dOut').value, dBack=$('#dBack').value;
+  if(!dOut){msg.textContent='Укажите дату вылета';return}
+  if(dBack&&dBack<dOut){msg.textContent='Обратно — раньше, чем туда';return}
+  const t={id:Date.now(),from:picked.from,to:picked.to,dOut,dBack,tOut:'',tBack:'',events:[],packed:[]};
+  trips.unshift(t); save(); openTrip(t.id);
+};
+
+function renderTrips(){
+  const box=$('#trips');
+  if(!trips.length){box.innerHTML='<p class="muted">Поездок пока нет.</p>';return}
+  box.innerHTML='';
+  trips.forEach(t=>{
+    const d=document.createElement('div'); d.className='trip-item';
+    d.innerHTML='<span style="font-size:22px">🧳</span><div><b>'+esc(t.from.name)+' → '+esc(t.to.name)+'</b><div class="muted">'+short(t.dOut)+(t.dBack?' – '+short(t.dBack):'')+' · дел: '+t.events.length+'</div></div><button class="del" title="Удалить">×</button>';
+    d.onclick=()=>openTrip(t.id);
+    d.querySelector('.del').onclick=e=>{e.stopPropagation();if(confirm('Удалить поездку?')){trips=trips.filter(x=>x.id!==t.id);save();renderTrips()}};
+    box.appendChild(d);
+  });
+}
+
+// ---------- погода (Open-Meteo) ----------
+const WMO={0:['☀️','ясно'],1:['🌤','малооблачно'],2:['⛅','облачно'],3:['☁️','пасмурно'],45:['🌫','туман'],48:['🌫','туман'],
+ 51:['🌦','морось'],53:['🌦','морось'],55:['🌧','морось'],56:['🌧','ледяная морось'],57:['🌧','ледяная морось'],
+ 61:['🌧','дождь'],63:['🌧','дождь'],65:['🌧','ливень'],66:['🌧','ледяной дождь'],67:['🌧','ледяной дождь'],
+ 71:['🌨','снег'],73:['🌨','снег'],75:['❄️','снегопад'],77:['🌨','снежная крупа'],80:['🌦','ливни'],81:['🌧','ливни'],82:['⛈','сильный ливень'],
+ 85:['🌨','снег'],86:['❄️','метель'],95:['⛈','гроза'],96:['⛈','гроза с градом'],99:['⛈','гроза с градом']};
+const SNOW=[71,73,75,77,85,86];
+async function getWeather(t){
+  const days=daysOf(t), today=iso(new Date()), horizon=addDays(today,15);
+  const vars='temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code,wind_speed_10m_max';
+  let url, archive=false;
+  if(days[0]<=horizon && days[days.length-1]>=today){
+    const s=days[0]<today?today:days[0], e=days[days.length-1]>horizon?horizon:days[days.length-1];
+    url=`https://api.open-meteo.com/v1/forecast?latitude=${t.to.lat}&longitude=${t.to.lon}&daily=${vars},precipitation_probability_max&timezone=auto&start_date=${s}&end_date=${e}`;
+  }else{
+    // Дальше 16 дней прогноза нет — показываем, какая погода была в эти дни год назад
+    archive=true;
+    const y=s=>(Number(s.slice(0,4))-1)+s.slice(4);
+    url=`https://archive-api.open-meteo.com/v1/archive?latitude=${t.to.lat}&longitude=${t.to.lon}&daily=${vars}&timezone=auto&start_date=${y(days[0])}&end_date=${y(days[days.length-1])}`;
+  }
+  const j=await (await fetch(url)).json();
+  const d=j.daily; if(!d) throw new Error('нет данных');
+  return {archive,list:d.time.map((tm,i)=>({date:archive?(Number(tm.slice(0,4))+1)+tm.slice(4):tm,max:d.temperature_2m_max[i],min:d.temperature_2m_min[i],
+    rain:d.precipitation_sum[i],prob:d.precipitation_probability_max?d.precipitation_probability_max[i]:null,code:d.weather_code[i],wind:d.wind_speed_10m_max[i]}))};
+}
+
+// ---------- что надеть ----------
+function clothes(w,t){
+  const L=w.list; if(!L.length) return [];
+  const lo=Math.min(...L.map(x=>x.min)), hi=Math.max(...L.map(x=>x.max));
+  const wet=L.some(x=>x.rain>=1||(x.prob!=null&&x.prob>=50)), snow=L.some(x=>SNOW.includes(x.code)), wind=Math.max(...L.map(x=>x.wind))>=30;
+  const nights=Math.max(daysOf(t).length-1,0), meet=t.events.length>0;
+  const r=[];
+  if(lo<=-15) r.push('Пуховик или тёплая дублёнка, термобельё, тёплая шапка, перчатки');
+  else if(lo<=-5) r.push('Зимнее пальто или пуховик, шапка, шарф, перчатки');
+  else if(lo<=3) r.push('Тёплое пальто, шарф, перчатки — утром и вечером около нуля');
+  else if(lo<=10) r.push('Демисезонное пальто или плащ, лёгкий шарф');
+  else if(hi<=20) r.push('Лёгкий плащ или пиджак, можно без верхней одежды днём');
+  else r.push('Жарко: лёгкий костюм из льна или хлопка, рубашки с коротким рукавом вне встреч');
+  if(hi>=25) r.push('Солнцезащитные очки, вода с собой');
+  if(snow||lo<=-3) r.push('Закрытая обувь на нескользкой подошве — возможен гололёд');
+  else if(wet) r.push('Непромокаемая обувь, лучше кожаная, а не замша');
+  if(wet) r.push('Компактный зонт — '+(snow?'снег и осадки':'ожидается дождь'));
+  if(wind) r.push('Сильный ветер — пальто с воротником, зонт-антиветер');
+  r.push(meet?'Деловой костюм; рубашек: '+(nights+1)+' шт.':'Повседневная одежда; рубашек/футболок: '+(nights+1)+' шт.');
+  return r;
+}
+function packList(t){
+  const n=Math.max(daysOf(t).length-1,0);
+  const l=['Паспорт','Билеты и бронь отеля в телефоне','Банковские карты (и наличные для Беларуси/России)','Зарядка и пауэрбанк','Ноутбук и зарядка к нему','Визитки','Бритва, зубная щётка'];
+  if(n>=2) l.push('Белья и носков: '+(n+1)+' комплектов');
+  if(t.events.length) l.push('Документы и материалы к встречам: '+t.events.length+' шт.');
+  return l;
+}
+
+// ---------- ссылки на билеты, отели, еду ----------
+const ddmm=s=>s.slice(8,10)+s.slice(5,7);
+function avia(t){return 'https://www.aviasales.ru/search/'+t.from.code+ddmm(t.dOut)+t.to.code+(t.dBack?ddmm(t.dBack):'')+'1'}
+function aviaBack(t){return 'https://www.aviasales.ru/search/'+t.to.code+ddmm(t.dBack)+t.from.code+'1'}
+const rasp=(a,b,d)=>'https://rasp.yandex.ru/search/?fromName='+encodeURIComponent(a)+'&toName='+encodeURIComponent(b)+'&when='+d;
+const ymap=(q,c)=>'https://yandex.ru/maps/?ll='+c.lon+','+c.lat+'&z=13&text='+encodeURIComponent(q);
+const gmap=(q,c)=>'https://www.google.com/maps/search/'+encodeURIComponent(q)+'/@'+c.lat+','+c.lon+',13z';
+
+// ---------- Google Календарь ----------
+const gcDate=(d,tm)=>d.replace(/-/g,'')+'T'+tm.replace(':','')+'00';
+function endTime(tm,h){const[a,b]=tm.split(':').map(Number);const m=((a*60+b+h*60)%1440+1440)%1440;return pad(Math.floor(m/60)%24)+':'+pad(m%60)}
+function gcAdd(title,d,tm,hours,place,details){
+  const dates=tm?gcDate(d,tm)+'/'+gcDate(d,endTime(tm,hours)):d.replace(/-/g,'')+'/'+addDays(d,1).replace(/-/g,'');
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(title)+'&dates='+dates+
+    (place?'&location='+encodeURIComponent(place):'')+(details?'&details='+encodeURIComponent(details):'');
+}
+const gcDay=d=>'https://calendar.google.com/calendar/r/day/'+d.replace(/-/g,'/');
+function icsFile(t){
+  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pomoshnik//RU'];
+  const ev=(title,d,tm,h,place)=>{L.push('BEGIN:VEVENT','UID:'+t.id+'-'+L.length+'@pomoshnik','DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z',
+    tm?'DTSTART:'+gcDate(d,tm):'DTSTART;VALUE=DATE:'+d.replace(/-/g,''), tm?'DTEND:'+gcDate(d,endTime(tm,h)):'DTEND;VALUE=DATE:'+addDays(d,1).replace(/-/g,''),
+    'SUMMARY:'+title.replace(/[,;]/g,'\\$&'), ...(place?['LOCATION:'+place.replace(/[,;]/g,'\\$&')]:[]),'END:VEVENT')};
+  ev('✈ '+t.from.name+' → '+t.to.name,t.dOut,t.tOut,2);
+  if(t.dBack) ev('✈ '+t.to.name+' → '+t.from.name,t.dBack,t.tBack,2);
+  t.events.forEach(e=>ev(e.title,e.date,e.time,1,e.place));
+  L.push('END:VCALENDAR');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([L.join('\r\n')],{type:'text/calendar'}));
+  a.download='Поездка '+t.to.name+'.ics';a.click();
+}
+
+// ---------- чтение Google Календаря (вход через Google, только чтение) ----------
+const GOOGLE_CLIENT_ID=''; // OAuth Client ID из Google Cloud Console, тип «Веб-приложение»
+let gToken=null;
+function loadGsi(){return new Promise((ok,fail)=>{if(window.google&&google.accounts)return ok();
+  const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.onload=ok;s.onerror=fail;document.head.appendChild(s)})}
+async function googleToken(){
+  if(gToken&&gToken.exp>Date.now()) return gToken.v;
+  await loadGsi();
+  return new Promise((ok,fail)=>{
+    google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:'https://www.googleapis.com/auth/calendar.events.readonly',
+      callback:r=>{if(r.error)return fail(new Error(r.error));gToken={v:r.access_token,exp:Date.now()+(r.expires_in-60)*1000};ok(gToken.v)}}).requestAccessToken();
+  });
+}
+async function syncGoogle(t){
+  const tok=await googleToken(), days=daysOf(t);
+  const q=new URLSearchParams({timeMin:parse(days[0]).toISOString(),timeMax:parse(addDays(days[days.length-1],1)).toISOString(),singleEvents:'true',orderBy:'startTime',maxResults:'100'});
+  const r=await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?'+q,{headers:{Authorization:'Bearer '+tok}});
+  if(!r.ok) throw new Error('Google ответил '+r.status);
+  const items=(await r.json()).items||[];
+  // Время берём как записано в событии (часовой пояс встречи), а не телефона
+  const g=items.filter(e=>e.status!=='cancelled'&&!/^✈/.test(e.summary||'')).map(e=>{const s=e.start.dateTime||e.start.date;
+    return {id:'g'+e.id,date:s.slice(0,10),time:e.start.dateTime?s.slice(11,16):'',title:e.summary||'(без названия)',place:e.location||'',google:true}}).filter(e=>days.includes(e.date));
+  t.events=t.events.filter(e=>!e.google).concat(g); t.synced=new Date().toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  save(); return g.length;
+}
+
+// ---------- план по дням ----------
+function mins(tm){const m=/(\d{1,2}):(\d{2})/.exec(tm||'');return m?m[1]*60+ +m[2]:null}
+function plan(t){
+  const days=daysOf(t), out=[], warns=[];
+  days.forEach((d,i)=>{
+    const items=[], first=i===0, last=i===days.length-1&&t.dBack;
+    if(first){
+      if(t.tOut){items.push([endTime(t.tOut,-2.5),'Выезд в аэропорт']);items.push([t.tOut,'Вылет '+t.from.name+' → '+t.to.name]);items.push([endTime(t.tOut,2.5),'Прилёт (уточните по билету), такси до гостиницы'])}
+      else items.push(['','Вылет '+t.from.name+' → '+t.to.name+' — укажите время рейса']);
+      items.push(['14:00','Заселение в гостиницу']);
+    }
+    t.events.filter(e=>e.date===d).forEach(e=>items.push([e.time,e.title+(e.place?' — '+e.place:'')]));
+    if(!first&&!last) items.push(['08:00','Завтрак в отеле, просмотр материалов к встречам']);
+    if(last){
+      items.push(['до 12:00','Выезд из гостиницы, багаж можно оставить на ресепшене']);
+      if(t.tBack){items.push([endTime(t.tBack,-2.5),'Выезд в аэропорт']);items.push([t.tBack,'Вылет '+t.to.name+' → '+t.from.name])}
+      else items.push(['','Обратный рейс — укажите время']);
+    }
+    if(!last) items.push(['19:30','Ужин — варианты в блоке «Где поесть»']);
+    // без времени — в начало дня, остальное по часам
+    items.sort((a,b)=>(mins(a[0])??-1)-(mins(b[0])??-1));
+    // Конфликты: встреча ближе 3 часов к рейсу
+    t.events.filter(e=>e.date===d&&e.time).forEach(e=>{
+      if(first&&t.tOut&&mins(e.time)<mins(t.tOut)+180) warns.push('«'+e.title+'» '+short(d)+' в '+e.time+' — слишком близко к прилёту (рейс в '+t.tOut+')');
+      if(last&&t.tBack&&mins(e.time)>mins(t.tBack)-180) warns.push('«'+e.title+'» '+short(d)+' в '+e.time+' — не успеете на обратный рейс в '+t.tBack);
+    });
+    out.push({d,items});
+  });
+  return {out,warns};
+}
+
+function shareText(t,w){
+  let s='🧳 '+t.from.name+' → '+t.to.name+', '+nice(t.dOut)+(t.dBack?' — '+nice(t.dBack):'')+'\n';
+  if(t.tOut) s+='✈ Вылет '+t.tOut+(t.tBack?', обратно '+t.tBack:'')+'\n';
+  if(w&&!w.archive) s+='\n🌡 Погода:\n'+w.list.map(x=>short(x.date)+' '+(WMO[x.code]||['',''])[0]+' '+Math.round(x.min)+'…'+Math.round(x.max)+'°').join('\n')+'\n';
+  if(t.events.length) s+='\n📅 Дела:\n'+t.events.map(e=>short(e.date)+(e.time?' '+e.time:'')+' — '+e.title).join('\n')+'\n';
+  if(w) s+='\n👔 Взять: '+clothes(w,t).join('; ')+'\n';
+  s+='\nБилеты: '+avia(t);
+  return s;
+}
+
+// ---------- экран поездки ----------
+function show(id){$('#home').classList.toggle('hidden',id!=='home');$('#trip').classList.toggle('hidden',id!=='trip');window.scrollTo(0,0)}
+function goHome(){cur=null;renderTrips();show('home');$('#sub').textContent='Поездки: билеты, погода, дела, гостиницы'}
+
+async function openTrip(id){
+  cur=trips.find(t=>t.id===id); if(!cur) return;
+  show('trip'); renderTrip();
+  if(!cur._w){try{cur._w=await getWeather(cur)}catch(e){cur._w={err:true}} if(cur&&cur.id===id) renderTrip()}
+}
+
+function renderTrip(){
+  const t=cur, w=t._w&&!t._w.err?t._w:null, P=plan(t), days=daysOf(t);
+  $('#sub').textContent=t.from.name+' → '+t.to.name+', '+short(t.dOut)+(t.dBack?' – '+short(t.dBack):'');
+  const evOpts=days.map(d=>'<option value="'+d+'">'+nice(d)+'</option>').join('');
+  let h='<button class="back" onclick="goHome()">← Все поездки</button>';
+
+  // Билеты
+  h+=`<div class="card"><h2><span class="ico">✈️</span>Билеты</h2>
+  <div class="row"><div><label>Вылет туда, ${short(t.dOut)}</label><input type="time" id="tOut" value="${t.tOut}"></div>
+  <div><label>${t.dBack?'Обратно, '+short(t.dBack):'Обратный рейс не нужен'}</label><input type="time" id="tBack" value="${t.tBack}" ${t.dBack?'':'disabled'}></div></div>
+  <p class="muted">Выберите рейс на Авиасейлс и впишите время вылета — по нему строится план дня и проверяются встречи.</p>
+  <div class="btns links"><a class="btn sm" target="_blank" href="${avia(t)}">Авиасейлс: туда${t.dBack?' и обратно':''}</a>
+  ${t.dBack?`<a class="btn sm sec" target="_blank" href="${aviaBack(t)}">Только обратно</a>`:''}
+  <a class="btn sm sec" target="_blank" href="${rasp(t.from.name,t.to.name,t.dOut)}">Поезда и автобусы</a></div></div>`;
+
+  // Погода
+  h+='<div class="card"><h2><span class="ico">🌤</span>Погода в '+esc(t.to.name)+'</h2>';
+  if(!t._w) h+='<p class="loading">Загружаю прогноз…</p>';
+  else if(t._w.err) h+='<p class="muted">Не удалось загрузить погоду — нет интернета?</p>';
+  else{
+    if(w.archive) h+='<p class="muted">До поездки больше 16 дней — точного прогноза ещё нет. Показываю, какая погода была в эти дни год назад.</p>';
+    else if(w.list.length<days.length) h+='<p class="muted">Прогноз есть на '+w.list.length+' из '+days.length+' дн., остальные появятся позже.</p>';
+    h+='<div class="days">'+w.list.map(x=>{const c=WMO[x.code]||['🌡',''];return `<div class="day"><div class="d">${short(x.date)}, ${WD[parse(x.date).getDay()]}</div><div class="w">${c[0]}</div><div class="t">${Math.round(x.min)}…${Math.round(x.max)}°</div><div class="p">${c[1]}${x.prob!=null?' · '+x.prob+'%':''}<br>ветер ${Math.round(x.wind/3.6)} м/с</div></div>`}).join('')+'</div>';
+  }
+  h+='</div>';
+
+  // Что надеть
+  if(w){
+    h+='<div class="card"><h2><span class="ico">👔</span>Что надеть и взять</h2><ul class="clean">'+clothes(w,t).map(x=>'<li>• <span>'+esc(x)+'</span></li>').join('')+'</ul>';
+    h+='<h3 style="font-size:15px;margin:14px 0 4px">Собрать в дорогу</h3><ul class="clean check">'+packList(t).map((x,i)=>`<li data-i="${esc(x)}" class="${t.packed.includes(x)?'done':''}"><div class="box">${t.packed.includes(x)?'✓':''}</div><span>${esc(x)}</span></li>`).join('')+'</ul></div>';
+  }
+
+  // Дела
+  h+=`<div class="card"><h2><span class="ico">📅</span>Дела в поездке</h2>`;
+  h+=GOOGLE_CLIENT_ID?`<div class="btns" style="margin-bottom:10px"><button class="btn sm" id="gsync">Загрузить дела из Google Календаря</button></div><p class="muted" id="gmsg">${t.synced?'Обновлено: '+esc(t.synced):''}</p>`
+    :'<p class="muted">Автозагрузка из Google Календаря ещё не подключена.</p>';
+  h+=t.events.length?t.events.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(e=>`<div class="ev"><div><b>${short(e.date)}${e.time?' '+e.time:''}</b> ${esc(e.title)}${e.place?'<div class="muted">'+esc(e.place)+'</div>':''}</div>
+    ${e.google?'<span class="muted" title="Из Google Календаря">📆</span>':`<a class="btn sm sec" target="_blank" href="${gcAdd(e.title,e.date,e.time,1,e.place,'Поездка в '+t.to.name)}" title="Добавить в Google Календарь">＋📆</a>`}<button class="x" data-del="${e.id}">×</button></div>`).join(''):'<p class="muted">Добавьте встречи — они попадут в план и проверятся на пересечение с рейсом.</p>';
+  h+=`<div style="margin-top:12px"><div class="row3"><select id="evDate">${evOpts}</select><input type="time" id="evTime"><input id="evPlace" class="wide" placeholder="Адрес (необяз.)"></div>
+  <div style="display:flex;gap:8px;margin-top:8px"><input id="evTitle" placeholder="Встреча, с кем"><button class="btn" id="evAdd">Добавить</button></div></div>
+  <p class="muted" style="margin-top:12px">Google Календарь: посмотреть свои дела на эти дни</p>
+  <div class="btns links">${days.map(d=>`<a class="btn sm sec" target="_blank" href="${gcDay(d)}">${short(d)}</a>`).join('')}</div>
+  <div class="btns" style="margin-top:8px"><a class="btn sm" target="_blank" href="${gcAdd('✈ '+t.from.name+' → '+t.to.name,t.dOut,t.tOut,2,'',avia(t))}">Рейс туда → в календарь</a>
+  ${t.dBack?`<a class="btn sm" target="_blank" href="${gcAdd('✈ '+t.to.name+' → '+t.from.name,t.dBack,t.tBack,2,'',aviaBack(t))}">Рейс обратно → в календарь</a>`:''}
+  <button class="btn sm sec" id="ics">Вся поездка файлом .ics</button></div></div>`;
+
+  // Гостиницы и еда
+  const c=t.to;
+  h+=`<div class="card"><h2><span class="ico">🏨</span>Гостиницы</h2>
+  <p class="muted">Если у встреч указаны адреса — ищите отель рядом с ними, чтобы не тратить время на дорогу.</p>
+  <div class="btns links"><a class="btn sm" target="_blank" href="${ymap('бизнес-отель',c)}">Бизнес-отели</a>
+  <a class="btn sm sec" target="_blank" href="${ymap('гостиница в центре',c)}">В центре</a>
+  <a class="btn sm sec" target="_blank" href="${ymap('апарт-отель',c)}">Апартаменты</a>
+  <a class="btn sm sec" target="_blank" href="${gmap('hotels',c)}">Google Карты</a>
+  <a class="btn sm sec" target="_blank" href="https://ostrovok.ru/">Островок</a></div></div>`;
+  h+=`<div class="card"><h2><span class="ico">🍽</span>Где поесть</h2><div class="btns links">
+  <a class="btn sm" target="_blank" href="${ymap('ресторан для деловой встречи',c)}">Для деловой встречи</a>
+  <a class="btn sm sec" target="_blank" href="${ymap('бизнес-ланч',c)}">Бизнес-ланч</a>
+  <a class="btn sm sec" target="_blank" href="${ymap('завтраки кафе',c)}">Завтраки</a>
+  <a class="btn sm sec" target="_blank" href="${ymap('ресторан местной кухни',c)}">Местная кухня</a>
+  <a class="btn sm sec" target="_blank" href="${ymap('кофейня',c)}">Кофейни</a></div></div>`;
+
+  // План
+  h+='<div class="card"><h2><span class="ico">🗒</span>План по дням</h2>'+P.warns.map(x=>'<div class="warn">⚠️ '+esc(x)+'</div>').join('');
+  h+=P.out.map(p=>{const wd=w&&w.list.find(x=>x.date===p.d);return `<div class="plan-day"><h3>${nice(p.d)}${wd?' · '+(WMO[wd.code]||[''])[0]+' '+Math.round(wd.min)+'…'+Math.round(wd.max)+'°':''}</h3><div class="tl">${p.items.map(i=>`<div><b>${esc(i[0])}</b> ${esc(i[1])}</div>`).join('')}</div></div>`}).join('')+'</div>';
+
+  // Поделиться
+  h+=`<div class="card"><h2><span class="ico">📤</span>Отправить</h2><div class="btns">
+  <a class="btn" target="_blank" href="https://t.me/share/url?url=${encodeURIComponent(avia(t))}&text=${encodeURIComponent(shareText(t,w))}">В Telegram</a>
+  <button class="btn sec" id="copy">Скопировать текст</button></div><p class="muted" id="copyMsg"></p></div>`;
+
+  $('#trip').innerHTML=h;
+
+  // обработчики
+  const upd=(k,v)=>{t[k]=v;save();renderTrip()};
+  $('#tOut').onchange=e=>upd('tOut',e.target.value);
+  $('#tBack').onchange=e=>upd('tBack',e.target.value);
+  $('#evAdd').onclick=()=>{const title=$('#evTitle').value.trim();if(!title){$('#evTitle').focus();return}
+    t.events.push({id:Date.now(),date:$('#evDate').value,time:$('#evTime').value,title,place:$('#evPlace').value.trim()});save();renderTrip()};
+  $('#evTitle').onkeydown=e=>{if(e.key==='Enter')$('#evAdd').click()};
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{t.events=t.events.filter(e=>String(e.id)!==b.dataset.del);save();renderTrip()});
+  document.querySelectorAll('.check li').forEach(li=>li.onclick=()=>{const x=li.dataset.i;t.packed=t.packed.includes(x)?t.packed.filter(y=>y!==x):[...t.packed,x];save();renderTrip()});
+  $('#ics').onclick=()=>icsFile(t);
+  if($('#gsync')) $('#gsync').onclick=async()=>{$('#gmsg').textContent='Загружаю…';
+    try{const n=await syncGoogle(t);renderTrip();$('#gmsg').textContent='Загружено дел: '+n+' · '+t.synced}catch(e){$('#gmsg').textContent='Не получилось: '+e.message}};
+  $('#copy').onclick=async()=>{try{await navigator.clipboard.writeText(shareText(t,w));$('#copyMsg').textContent='Скопировано'}catch(e){$('#copyMsg').textContent='Не удалось скопировать'}};
+}
+
+renderTrips();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js');
+</script>
+</body>
+</html>

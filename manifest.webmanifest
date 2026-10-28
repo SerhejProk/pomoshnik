@@ -1,0 +1,11 @@
+{
+  "name": "Помощник руководителя",
+  "short_name": "Помощник",
+  "description": "Поездки: билеты, погода, дела, гостиницы и план",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f3f4f7",
+  "theme_color": "#1f3a5f",
+  "lang": "ru",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
